@@ -20,6 +20,16 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "F=/Users/euiyongshin/study/my-claude-os/docs/STATUS.md; [ -f \"$F\" ] && jq -nc --arg ctx \"$(cat \"$F\")\" '{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: $ctx}}' || true"
+          }
+        ]
+      }
     ]
   }
 }
