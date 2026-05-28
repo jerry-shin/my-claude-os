@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r 'if (.prompt // \"\") | startswith(\"/\") then (.prompt | split(\" \")[0] | ltrimstr(\"/\")) else empty end' | { read -r skill; [ -n \"$skill\" ] && jq -nc --arg s \"$skill\" --argjson e \"$(date +%s)\" --arg iso \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" '{skill:$s, start:$iso, start_epoch:$e}' > /tmp/claude-skill-current.json; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f /tmp/claude-skill-current.json ] && jq -c --argjson now \"$(date +%s)\" '{skill, start, duration_sec: ($now - .start_epoch)}' /tmp/claude-skill-current.json >> /Users/euiyongshin/study/my-claude-os/logs/skill-usage.jsonl && rm -f /tmp/claude-skill-current.json 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
